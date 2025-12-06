@@ -1,9 +1,13 @@
 map = []
-for line in open('input2.txt', 'r').readlines():
+indexes_to_check = set()
+for i, line in enumerate(open('input2.txt', 'r').readlines()):
     line = line.strip()
     row = []
-    for char in line:
-        row.append(char == '@')
+    for j, char in enumerate(line):
+        has_roll = char == '@'
+        row.append(has_roll)
+        if has_roll:
+            indexes_to_check.add((i, j))
     map.append(row)
 
 
@@ -16,51 +20,52 @@ iterated_once = False
 while total_can_access > 0:
     total_can_access = 0
     indexes_to_remove = []
-    for row in range(0, len(map)):
-        #print(f'row {row}')
-        row_str = ''
-        for column in range(0, len(map[row])):
+    # for row in range(0, len(map)):
+    #     #print(f'row {row}')
+    # this is broken now
+    row_str = ''
+    #     for column in range(0, len(map[row])):
             #print(f'column {column}')
-            def is_valid(r, c):
-                if r < 0:
-                    return False
-                if c < 0:
-                    return False
-                if r >= len(map):
-                    return False
-                if c >= len(map[r]):
-                    return False
+    for index in indexes_to_check:
+        row = index[0]
+        column = index[1]
+        def is_valid(r, c):
+            if r < 0:
+                return False
+            if c < 0:
+                return False
+            if r >= len(map):
+                return False
+            if c >= len(map[r]):
+                return False
+            return True
+        def is_empty(r, c):
+            if not is_valid(r, c):
+                # #print('not valid')
                 return True
-            def is_empty(r, c):
-                if not is_valid(r, c):
-                    # #print('not valid')
-                    return True
-                return map[r][c] == False
-            if is_empty(row, column):
-                row_str += '.'
-                count_str += '0'
-                #print('skipped')
-                continue
-            total_full = 0
-            for row_offset in OFFSETS_TO_CHECK:
-                for column_offset in OFFSETS_TO_CHECK:
-                    if row_offset == 0 and column_offset == 0:
-                        continue
-                    #print(f'row {row} column {column} row_offset {row_offset}, column_offset {column_offset}')
-                    if not is_empty(row + row_offset, column + column_offset):
-                        total_full +=1
-            if total_full < 4:
-                row_str = row_str + 'X'
-                total_can_access += 1
-                indexes_to_remove.append((row, column))
-            else:
-                row_str += '@'
-            count_str += str(total_full)
-        # print(row_str)
-        count_str += '\n'
+            return map[r][c] == False
+        if is_empty(row, column):
+            row_str += '.'
+            count_str += '0'
+            #print('skipped')
+            continue
+        total_full = 0
+
+        for row_offset in OFFSETS_TO_CHECK:
+            for column_offset in OFFSETS_TO_CHECK:
+                if row_offset == 0 and column_offset == 0:
+                    continue
+                #print(f'row {row} column {column} row_offset {row_offset}, column_offset {column_offset}')
+                if not is_empty(row + row_offset, column + column_offset):
+                    total_full +=1
+        if total_full < 4:
+            row_str = row_str + 'X'
+            total_can_access += 1
+            indexes_to_remove.append((row, column))
     print(f'can access {total_can_access} rolls')
     all_removed += total_can_access
     for index in indexes_to_remove:
+        indexes_to_check.remove(index)
         row = index[0]
         column = index[1]
         assert map[row][column] == True
