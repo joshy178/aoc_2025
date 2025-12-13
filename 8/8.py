@@ -14,7 +14,7 @@ class coordinate(object):
     def __hash__(self):
         return hash((self.x, self.y, self.z))
 coords = []
-for line in open('input.txt', 'r').readlines():
+for line in open('input1.txt', 'r').readlines():
     line = line.strip()
     coords.append(coordinate(line))
 
@@ -41,12 +41,12 @@ circuits = []
 
 # pprint.pprint(distances_map)
 
-circuits = [set([coord]) for coord in coords]
+# circuits = [set([coord]) for coord in coords]
 # for circuit in circuits:
 #     print(circuit)
 print(f'circuit len {len(circuits)}')
 
-for i in range(0, 10 ):
+for i in range(0, 1000 ):
     print(f'interation {i}')
     shortest_distance = distances.pop(0)
     value = distances_map[shortest_distance]
@@ -54,7 +54,7 @@ for i in range(0, 10 ):
 
     # print((coord1, coord2))
     # print(f'iteration {i} Next Shortest Distance is {coord1} to {coord2} at distance {shortest_distance}')
-    # found_circuit = False
+    found_circuit = False
     for j, circuit in enumerate(circuits):
         if coord1 in circuit:
             found_circuit = True
@@ -73,11 +73,11 @@ for i in range(0, 10 ):
         #         found_circuit = True
         #         circuits[j].add(coord1)
         #         break
-    # if found_circuit == False:
-    #     new_set = set()
-    #     new_set.add(coord1)
-    #     new_set.add(coord2)
-    #     circuits.append(new_set)
+    if found_circuit == False:
+        new_set = set()
+        new_set.add(coord1)
+        new_set.add(coord2)
+        circuits.append(new_set)
     # print('---------')
     # for circuit in circuits:
     #     print(circuit)
