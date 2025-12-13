@@ -18,6 +18,8 @@ for line in open('input1.txt', 'r').readlines():
     line = line.strip()
     coords.append(coordinate(line))
 
+total_coords = len(coords)
+
 # for coord in coords:
 #     print(coord)
 
@@ -46,13 +48,15 @@ circuits = []
 #     print(circuit)
 print(f'circuit len {len(circuits)}')
 
-for i in range(0, 1000 ):
-    print(f'interation {i}')
+i = 0
+while len(circuits) == 0 or len(circuits[0]) != total_coords:
+
+    print(f'iteration {i}')
+    i +=1
     shortest_distance = distances.pop(0)
     value = distances_map[shortest_distance]
     coord1, coord2 = value
 
-    # print((coord1, coord2))
     # print(f'iteration {i} Next Shortest Distance is {coord1} to {coord2} at distance {shortest_distance}')
     found_circuit = False
     for j, circuit in enumerate(circuits):
@@ -78,6 +82,8 @@ for i in range(0, 1000 ):
         new_set.add(coord1)
         new_set.add(coord2)
         circuits.append(new_set)
+    print((coord1, coord2))
+
     # print('---------')
     # for circuit in circuits:
     #     print(circuit)
@@ -120,6 +126,8 @@ for coord in coords:
 # for j, circuit in enumerate(circuits):
 #     print(f'{j}: {circuit}')
 
+print(f'{str(coord1.x)} * {str(coord2.x)} = {coord1.x* coord2.x}')
+
 all_points = set()
 
 for circuit in circuits:
@@ -130,16 +138,16 @@ for circuit in circuits:
 
 circuits.sort(key=lambda x: len(x), reverse=True)
 total = 0
-for i in range(0,3):
-    size = len(circuits[i])
-    print(f'Circuit {i} size {size}')
-    print(circuit)
-    if total == 0:
-        total = size
-    else:
-        total *= size
+# for i in range(0,3):
+#     size = len(circuits[i])
+#     print(f'Circuit {i} size {size}')
+#     print(circuit)
+#     if total == 0:
+#         total = size
+#     else:
+#         total *= size
 
-print(f'total {total}')
-print(f'{len(circuits)} total circuits')
-print(f'{size_of_one} size_of_one')
-# print(len(distances))
+# print(f'total {total}')
+# print(f'{len(circuits)} total circuits')
+# print(f'{size_of_one} size_of_one')
+# # print(len(distances))
