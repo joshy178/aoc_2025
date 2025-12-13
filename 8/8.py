@@ -18,19 +18,20 @@ for line in open('input.txt', 'r').readlines():
     line = line.strip()
     coords.append(coordinate(line))
 
-for coord in coords:
-    print(coord)
+# for coord in coords:
+#     print(coord)
 
 
 distances_map = {}
 distances = []
 #going to assume each distance is unique
 
-for i, coord1 in enumerate(coords):
-    if i == len(coords)-1:
-        break
+for i, coord1 in enumerate(coords[:-1]):
+    # if i == len(coords)-1:
+    #     break
     for j, coord2 in enumerate(coords[i+1:]):
         key = coord1 - coord2
+        assert key not in distances_map
         distances_map[key] = (coord1, coord2)
         distances.append(key)
 
@@ -38,55 +39,94 @@ distances.sort()
 
 circuits = []
 
-pprint.pprint(distances_map)
+# pprint.pprint(distances_map)
 
+circuits = [set([coord]) for coord in coords]
+# for circuit in circuits:
+#     print(circuit)
+print(f'circuit len {len(circuits)}')
 
-for i in range(0, 10):
+for i in range(0, 10 ):
+    print(f'interation {i}')
     shortest_distance = distances.pop(0)
     value = distances_map[shortest_distance]
     coord1, coord2 = value
-    print(f'Next Shortest Distance is {coord1} to {coord2} at distance {shortest_distance}')
-    found_circuit = False
+
+    # print((coord1, coord2))
+    # print(f'iteration {i} Next Shortest Distance is {coord1} to {coord2} at distance {shortest_distance}')
+    # found_circuit = False
     for j, circuit in enumerate(circuits):
-        for coord in circuit:
-            if coord == coord1:
-                found_circuit = True
-                circuits[j].add(coord2)
-                break
-            if coord == coord2:
-                found_circuit = True
-                circuits[j].add(coord1)
-                break
-    if found_circuit == False:
-        circuits.append(set([coord1, coord2]))
+        if coord1 in circuit:
+            found_circuit = True
+            circuits[j].add(coord2)
+            # break
+        if coord2 in circuit:
+            found_circuit = True
+            circuits[j].add(coord1)
+            # break
+        # for coord in circuit:
+        #     if coord == coord1:
+        #         found_circuit = True
+        #         circuits[j].add(coord2)
+        #         break
+        #     if coord == coord2:
+        #         found_circuit = True
+        #         circuits[j].add(coord1)
+        #         break
+    # if found_circuit == False:
+    #     new_set = set()
+    #     new_set.add(coord1)
+    #     new_set.add(coord2)
+    #     circuits.append(new_set)
+    # print('---------')
+    # for circuit in circuits:
+    #     print(circuit)
+    # print('---------')
     changed = True
     while changed:
         changed = False
         new_circuits = []
         for j, circuit in enumerate(circuits):
             for k, circuit2 in enumerate(circuits[j+1:]):
-                if changed:
-                    new_circuits.append(circuit2)
-                    continue
+                # if changed:
+                #     new_circuits.append(circuit2)
+                #     continue
                 if len(circuit.intersection(circuit2)) != 0:
-                    new_circuits.append(circuit.union(circuit2))
-                    # if (j + k + 1) < len(circuits) - 1:
-                    #     new_circuits.extend(circuits[j + k + 1:])
+                    circuits[j] = circuits[j].union(circuit2)
+                    circuits.remove(circuit2)
+                    # # if (j + k + 1) < len(circuits) - 1:
+                    # #     new_circuits.extend(circuits[j + k + 1:])
                     changed = True
                     # break
-            if not changed:
-                new_circuits.append(circuit)
-            else:
+                    # break
+            if changed:
                 break
-        circuits = new_circuits
-        
-
-
-        circuits = new_circuits
-                
 
 for j, circuit in enumerate(circuits):
-    print(f'{j}: {circuit}')
+    for k, circuit2 in enumerate(circuits[j+1:]):
+        if len(circuit.intersection(circuit2)) != 0:
+            assert False
+
+size_of_one = 0
+for coord in coords:
+    found = False
+    for circuit in circuits:
+        if coord in circuit:
+            found = True
+            break
+    if not found:
+        size_of_one += 1
+
+# for j, circuit in enumerate(circuits):
+#     print(f'{j}: {circuit}')
+
+all_points = set()
+
+for circuit in circuits:
+    for point in circuit:
+        if point in all_points:
+            assert False
+        all_points.add(point)
 
 circuits.sort(key=lambda x: len(x), reverse=True)
 total = 0
@@ -100,4 +140,6 @@ for i in range(0,3):
         total *= size
 
 print(f'total {total}')
-
+print(f'{len(circuits)} total circuits')
+print(f'{size_of_one} size_of_one')
+# print(len(distances))
